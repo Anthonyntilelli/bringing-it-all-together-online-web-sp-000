@@ -44,6 +44,13 @@ class Dog
     self
   end
   
+  def update
+    # binding.pry
+    sql = "UPDATE dogs SET name == ?, breed == ?  WHERE id == ?"
+    DB[:conn].execute(sql, @name, @breed, @id)
+  end
+
+  
   def self.find_by_name(name)
     sql = "SELECT * FROM dogs WHERE name == ? LIMIT 1;"
     row = DB[:conn].execute(sql, name).first
@@ -56,11 +63,12 @@ class Dog
     Dog.new_from_db(row)
   end
 
+
   def self.find_or_create_by(name:, breed:)
     dog = DB[:conn].execute("SELECT * FROM dogs WHERE name == ? AND breed == ?", name, breed)
     # binding.pry
     unless dog.empty?
-      dog_data = dog.first
+      dog_data = Dog.first
       dog = Dog.new(id:dog_data[0], name:dog_data[1], breed:dog_data[2])
     #  binding.pry
     else
@@ -68,13 +76,4 @@ class Dog
     end
     dog
   end
-
-
-  def update
-    # binding.pry
-    sql = "UPDATE dogs SET name == ?, breed == ?  WHERE id == ?"
-    DB[:conn].execute(sql, @name, @breed, @id)
-  end
-
-  
 end
